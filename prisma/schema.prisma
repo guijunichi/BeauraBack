@@ -1,0 +1,377 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+model Turma{
+  tur_id Int @default(autoincrement()) @id
+  tur_nome String
+  tecnicos Tecnicos[]
+}
+
+model Especialidade {
+  esp_id    Int     @default(autoincrement()) @id
+  esp_nome String  @unique
+  esp_descricao String?
+  tecnicos Tecnicos[]
+}
+model Tecnicos {
+  tec_id    Int     @default(autoincrement()) @id
+  tec_nome String
+  tec_sobrenome String
+  tec_rg String @unique
+  tec_cpf String @unique
+  tec_rua String
+  tec_numero String
+  tec_complemento String?
+  tec_bairro String
+  tec_cep String
+  tec_cidade String
+  tec_uf String
+  tec_celular String
+  tec_telefone String
+  tec_emergencia String?
+  tec_contato String?
+  tec_dataNascimento DateTime @db.Date
+  tec_idade String
+  tec_sexo String
+  tec_escolaridade String
+  tec_profissao String
+  tec_estadoCivil String
+  tec_filhos String
+  consulta Consulta[]
+  turId Int
+  tur Turma @relation(fields: [turId], references: [tur_id])
+  espId Int?
+  esp Especialidade? @relation(fields: [espId], references: [esp_id])
+  cliId Int
+  cliTec Cliente @relation(fields: [cliId], references: [cli_id])
+}
+model Consulta {
+  con_id    Int     @default(autoincrement()) @id
+  con_data DateTime @db.Date
+  con_descricao String?
+  hora_inicio String
+  hora_termino String
+  tec_id Int
+  tec Tecnicos @relation(fields: [tec_id], references: [tec_id])
+  sol_id Int
+  sol Solicitacao @relation(fields:[sol_id], references: [sol_id])
+}
+model Cliente {
+  cli_id Int @id @default(autoincrement())
+  cli_email String @unique
+  cli_senha String
+  cadCli Cadastro[]
+  tecCli Tecnicos[]
+  userType  UserType @default(Cliente)
+}
+enum UserType {
+  Cliente
+  Tecnico
+  Admin
+} 
+
+model Cadastro {
+  cad_id Int @id @default(autoincrement())
+  cad_nome String
+  cad_sobrenome String
+  cad_rg String @unique
+  cad_cpf String @unique
+  cad_rua String
+  cad_numero String
+  cad_complemento String?
+  cad_bairro String
+  cad_cep String
+  cad_cidade String
+  cad_uf String
+  cad_celular String
+  cad_telefone String
+  cad_emergencia String?
+  cad_contato String?
+  cad_dataNascimento DateTime @db.Date
+  cad_idade String
+  cad_sexo String
+  cad_escolaridade String
+  cad_profissao String
+  cad_estadoCivil String
+  cad_filhos String
+  cliId Int
+  cliCad Cliente @relation(fields: [cliId], references: [cli_id])
+  solCad Solicitacao[]
+}
+
+model Procedimento {
+  pro_id Int @id @default(autoincrement())
+  pro_nome String
+  solPro Solicitacao[]
+}
+
+model Solicitacao {
+  sol_id Int @id @default(autoincrement())
+  sol_status String @default("EM ANÁLISE")
+  sol_data DateTime @default(now())
+  sol_descricao String?
+  cadId Int
+  proId Int
+  cadSol Cadastro @relation(fields: [cadId], references: [cad_id])
+  proSol Procedimento @relation(fields: [proId], references: [pro_id])
+  preSol PreFormulario[]
+  facSol FormularioFacial[]
+  corSol FormularioCorporal[]
+  conSol Consulta[]
+}
+
+model PreFormulario {
+  pre_id Int @id @default(autoincrement())
+  pre_altura Decimal
+  pre_peso Decimal
+  pre_imc Decimal
+  // Pergunta: Fez Tratamentos Estéticos Anteriores?
+  pre_p1 String
+  // Pergunta: Caso sim, quais?
+  pre_p2 String?
+  // Pergunta: Médico/Especialidade/Data da Última Consulta / Médico:
+  pre_p3 String?
+  // Pergunta: Especialidade:
+  pre_p4 String?
+  // Pergunta: Data:
+  pre_p5 DateTime? @db.Date
+  // Pergunta: Antecedentes Alérgicos?
+  pre_p6 String
+  // Pergunta: Caso sim, quais?
+  pre_p7 String?
+  // Pergunta: Alterações Hormonais?
+  pre_p8 String
+  // Pergunta: Reposição Hormonal?
+  pre_p9 String
+  // Pergunta: Hipertiroidismo?
+  pre_p10 String
+  // Pergunta: Hipotireoidismo?
+  pre_p12 String
+  // Pergunta: Intestino Regular?
+  pre_p13 String
+  // Pergunta: Alimentação Balanceada?
+  pre_p14 String
+  // Pergunta: Consumo de Líquidos?
+  pre_p15 String
+  // Pergunta: Quantidade/Dia:
+  pre_p16 String
+  // Pergunta: Ingere Bebida Alcoólica?
+  pre_p17 String
+  // Pergunta: Com qual Frequência:
+  pre_p18 String?
+  // Pergunta: Prática de Atividades Físicas?:
+  pre_p19 String
+  // Pergunta: Caso sim, quais?
+  pre_p20 String?
+  // Pergunta: Com qual Frequência:
+  pre_p21 String?
+  // Pergunta: Fumante?
+  pre_p22 String
+  // Pergunta: Ciclo Menstrual Regular?
+  pre_p23 String?
+  // Pergunta: DUM:
+  pre_p24 DateTime? @db.Date
+  // Pergunta: Faz Uso de Métodos Anticoncepcionais?
+  pre_p25 String
+  // Pergunta: Caso sim, quais?
+  pre_p26 String?
+  // Pergunta: Medicação de Uso Contínuo?
+  pre_p27 String
+  // Pergunta: Caso sim, quais?
+  pre_p28 String?
+  // Pergunta: Gestação?
+  pre_p29 String
+  // Pergunta: Quantas?
+  pre_p30 String?
+  // Pergunta: Tipos de Partos:
+  pre_p31 String?
+  // Pergunta: Está Amamentando?
+  pre_p32 String
+  // Pergunta: Está Gestante?
+  pre_p33 String
+  // Pergunta: Alterações de Pressão / Hipotensão ou Hipertensão?
+  pre_p34 String
+  // Pergunta: Alterações Vasculares? / Varizes?
+  pre_p36 String
+  // Pergunta: Trombose?
+  pre_p37 String
+  // Pergunta: Outras?
+  pre_p38 String?
+  // Pergunta: Distúrbios Cardíacos?
+  pre_p39 String
+  // Pergunta: Caso sim, quais?
+  pre_p40 String
+  // Pergunta: Portador de Marca Passo?
+  pre_p41 String
+  // Pergunta: Há quanto tempo?
+  pre_p42 String?
+  // Pergunta: Presença de Prótese Metálica?
+  pre_p43 String
+  // Pergunta: Localização:
+  pre_p44 String?
+  // Pergunta: Aparelho Ortodôntico?
+  pre_p45 String
+  // Pergunta: Faz uso de Lentes de Contato?
+  pre_p46 String
+  // Pergunta: Epilepsia?
+  pre_p47 String
+  // Pergunta: Convulsões?
+  pre_p48 String
+  // Pergunta: Diabetes?
+  pre_p49 String
+  // Pergunta: Antecedentes Oncológico?
+  pre_p50 String
+  // Pergunta: Caso sim, quais?
+  pre_p51 String?
+  // Pergunta: Fez Cirurgia Recentemente?
+  pre_p52 String
+  // Pergunta: Caso sim, qual?
+  pre_p53 String?
+  // Pergunta: Faz uso de protetor solar diariamente?
+  pre_p54 String
+  // Pergunta: Caso sim, reaplica?
+  pre_p55 String?
+  // Pergunta: Quais produtos você usa para cuidado diário?
+  pre_p56 String?
+  solId Int
+  solPre Solicitacao @relation(fields: [solId], references: [sol_id])
+}
+
+model FormularioFacial {
+  fac_id Int @id @default(autoincrement())
+  fac_img String?
+  // Pergunta: Classificação de Fitzpatrick
+  fac_p1 String
+  // Pergunta: Classificação Quanto a Espessura
+  fac_p2 String
+  // Pergunta: Classificação Quanto a Oleosidade
+  fac_p3 String
+  // Pergunta: Classificação Quanto a Hidratação
+  fac_p4 String
+  // Pergunta: Máculas Vasculares:
+  fac_p5 String
+  // Pergunta: Máculas Pigmentares
+  fac_p6 String
+  // Pergunta: Sólidas
+  fac_p7 String
+  // Pergunta: Outros? Quais?
+  fac_p8 String?
+  // Pergunta: Líquidos
+  fac_p9 String
+  // Pergunta: Outros? Quais?
+  fac_p10 String?
+  // Pergunta: Alteração de Consistência e Espessura
+  fac_p11 String
+  // Pergunta: Outros? Quais?
+  fac_p12 String?
+  // Pergunta: Alteração Produzida por Perda de Substância
+  fac_p13 String
+  // Pergunta: Outros? Quais?
+  fac_p14 String?
+  // Pergunta: Acne?
+  fac_p15 String
+  // Pergunta: Discromias
+  fac_p16 String
+  // Pergunta: Localização:
+  fac_p17 String?
+  // Pergunta: Pêlos
+  fac_p18 String
+  // Pergunta: Outras alterações
+  fac_p19 String
+  fac_ComObs String
+  solId Int
+  solFac Solicitacao @relation(fields: [solId], references: [sol_id])
+}
+
+model FormularioCorporal {
+  cor_id Int @id @default(autoincrement())
+  cor_img String?
+  // Pergunta: Classificação de Fitzpatrick
+  cor_p1 String
+  // Pergunta: Textura da Pele:
+  cor_p2 String
+  // Pergunta: Lesões Vasculares:
+  cor_p3 String
+  // Pergunta: Lesões Pigmentares:
+  cor_p4 String
+  // Pergunta: Lesões Sólidas:
+  cor_p5 String
+  // Pergunta: Outras? Quais?
+  cor_p6 String?
+  // Pergunta: Conteúdos Líquidos
+  cor_p7 String
+  // Pergunta: Outros? Quais?
+  cor_p8 String?
+  // Pergunta: Hidratação?
+  cor_p9 String
+  // Pergunta: Espessura/Consistência:
+  cor_p10 String
+  // Pergunta: Biotipo Corporal
+  cor_p11 String
+  // Pergunta: Dor a Palpação
+  cor_p12 String
+  // Pergunta: Grau de Intensidade
+  cor_p13 String
+  // Pergunta: Classificação
+  cor_p14 String
+  // Pergunta: Localização
+  cor_p15 String
+  // Pergunta: Adiposidade
+  cor_p16 String
+  // Pergunta: Localização:
+  cor_p17 String
+  // Pergunta: Estrias / Nacaradas
+  cor_p18 String
+  // Pergunta: Localização:
+  cor_p19 String
+  // Pergunta: Rubras:
+  cor_p20 String
+  // Pergunta: Localização:
+  cor_p21 String
+  // Pergunta: Hidratação:
+  cor_p22 String
+  // Pergunta: Localização:
+  cor_p23 String
+  // Pergunta: Flacidez Generalizada:
+  cor_p24 String
+  // Pergunta: Localização:
+  cor_p25 String
+  cor_ComObs String
+  solId Int
+  solCor Solicitacao @relation(fields: [solId], references: [sol_id])
+  bioCor Biometria[]
+}
+
+model Biometria {
+  bio_id Int @id @default(autoincrement())
+  bio_data DateTime @db.Date
+  bio_bracoD Decimal?
+  bio_bracoE Decimal?
+  bio_busto Decimal?
+  bio_torax Decimal?
+  bio_cintura Decimal?
+  bio_abdomen Decimal?
+  bio_flancos Decimal?
+  bio_quadril Decimal?
+  bio_culote Decimal?
+  bio_coxaD Decimal?
+  bio_coxaE Decimal?
+  bio_entreD Decimal?
+  bio_entreE Decimal?
+  bio_panturrilhaD Decimal?
+  bio_panturrilhaE Decimal?
+  corId Int
+  corBio FormularioCorporal @relation(fields: [corId], references: [cor_id])
+}

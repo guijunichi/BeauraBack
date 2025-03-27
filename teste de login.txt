@@ -1,0 +1,51 @@
+"cli_email": "usuario1@teste.com",
+  "cli_senha": "1991RbRS.td"
+
+"cli_email": "usuario2@teste.com",
+  "cli_senha": "1918BRasil.td"
+
+  "cli_id": 6,
+    "cli_email": "analuisa@teste.com",
+    "cli_senha": ".pTsdkf216."
+
+   "cli_email": rosisilva@gmail.com
+"cli_senha": "Musica1994."
+
+casanova@aluno.br
+ "cli_senha": ".pTsdkf216."
+
+colocar no READEME - ao utilizar o banco gerar um usuario e definir como admin
+
+ // Redirecionar baseado no tipo de usuário
+      if (response.data.userType === 'cliente') {
+        router.push('/pagina-inicial');
+      } else if (response.data.userType === 'tecnicos') {
+        router.push('/pagina-inicial');
+      } else if (response.data.userType === 'admin') {
+        router.push('/pagina-inicial'); // Redireciona o administrador para seu dashboard
+      }
+      
+    } catch (error) {}
+
+
+ 
+        "cad_nome": "Ricardo",
+        "cad_sobrenome": "Sales",
+        "cad_rg": "123456",
+        "cad_cpf": "41526",
+        "cad_rua": "Dois",
+        "cad_numero": "30",
+        "cad_complemento": "",
+        "cad_bairro": "Pq Laranjais",
+        "cad_cep": "152373",
+        "cad_cidade": "catanduva",
+        "cad_uf": "sp",
+        "cad_celular": "19851968",
+        "cad_telefone": "57278",
+        "cad_dataNascimento": "2000-06-12",
+        "cad_idade": "30",
+        "cad_sexo": "masculino",
+        "cad_escolaridade": "Nivel Médio",
+        "cad_profissao": "Desempregado",
+        "cad_estadoCivil": "Solteiro",
+        "cad_filhos": "Nenhum"
