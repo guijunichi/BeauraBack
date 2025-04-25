@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException  } from '@nestjs/common';
 import { CreateCadastroDto } from './dto/create-cadastro.dto';
 import { UpdateCadastroDto } from './dto/update-cadastro.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -7,8 +7,21 @@ import { CadastroEntity } from './entities/cadastro.entity';
 @Injectable()
 export class CadastroService {
   constructor(private readonly prisma :PrismaService){}
-  async create(createCadastroDto :CreateCadastroDto) :Promise<CadastroEntity> {
-    return this.prisma.cadastro.create({data:createCadastroDto});
+  async create(createCadastroDto: CreateCadastroDto): Promise<CadastroEntity> {
+    // Verifica se já existe um cadastro com o e-mail fornecido
+    const existingUser = await this.prisma.cadastro.findUnique({
+      where: { cli_email: createCadastroDto.cli_email },
+    });
+
+    if (existingUser) {
+      // Se o e-mail já estiver cadastrado, lança uma exceção de conflito
+      throw new ConflictException('E-mail já cadastrado.');
+    }
+
+    // Se não existir, cria o novo cadastro
+    return this.prisma.cadastro.create({
+      data: createCadastroDto,
+    });
   }
 
   async findAll() :Promise<CadastroEntity[]>{
