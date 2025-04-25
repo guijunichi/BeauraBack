@@ -12,8 +12,9 @@ export class ClienteController {
   async create(@Body() createClienteDto: CreateClienteDto) {
     const existingClient = await this.clienteService.findByEmail(createClienteDto.cli_email);
     if (existingClient) {
-      throw new ConflictException('E-mail já cadastrado.');
+      throw new Error('Este email já está cadastrado');
     }
+
     return this.clienteService.create(createClienteDto);
   }
 
