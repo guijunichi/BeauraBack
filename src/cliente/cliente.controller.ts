@@ -9,14 +9,22 @@ export class ClienteController {
   constructor(private readonly clienteService: ClienteService) {}
 
   @Post()
-  create(@Body() createClienteDto: CreateClienteDto) {
+  async create(@Body() createClienteDto: CreateClienteDto) {
+    // Verificar se o e-mail já existe
+    const existingClient = await this.clienteService.findByEmail(createClienteDto.email);
+    if (existingClient) {
+      throw new Error('E-mail já cadastrado');
+    }
+
+    // Caso não exista, criar o cliente
     return this.clienteService.create(createClienteDto);
   }
 
   @Get()
-   findAll() {
-     return this.clienteService.findAll();
+  findAll() {
+    return this.clienteService.findAll();
   }  
+  
   //@UseGuards(AuthGuard)//protegido
   @Get(':id')
   findOne(@Param('id') id: string) {
