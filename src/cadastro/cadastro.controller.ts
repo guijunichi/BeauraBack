@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,ConflictException, InternalServerErrorException  } from '@nestjs/common';
 import { CadastroService } from './cadastro.service';
 import { CreateCadastroDto } from './dto/create-cadastro.dto';
 import { UpdateCadastroDto } from './dto/update-cadastro.dto';
