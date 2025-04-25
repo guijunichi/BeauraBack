@@ -1,46 +1,46 @@
+
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { ClienteEntity } from './entities/cliente.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ClienteService {
-  constructor(private readonly prisma: PrismaService) {}
-
-  // Buscar cliente por email
-  async findByEmail(cli_email: string): Promise<Cliente | null> {
-    return this.prisma.cliente.findUnique({
-      where: { cli_email }, // Certifique-se de usar 'cli_email' aqui
-    });
+  constructor(private readonly prisma : PrismaService){}
+  async create(createClienteDto: CreateClienteDto) : Promise<ClienteEntity> {
+    const hash = await bcrypt.hash(createClienteDto.cli_senha, 12);
+    createClienteDto.cli_senha = hash;
+    return this.prisma.cliente.create({data:createClienteDto});
+  }
+  // async findUnique(cli_email: string): Promise<ClienteEntity> {
+  //   if (!cli_email) {
+  //     throw new Error('O campo cli_email não pode estar vazio ou indefinido');
+  //   }
+  
+  //   return this.prisma.cliente.findUnique({
+  //     where: {
+  //       cli_email: cli_email,
+  //     },
+  //   });
+  // }
+  
+  async findAll() : Promise<ClienteEntity[]> {
+  return this.prisma.cliente.findMany();
+ }
+  async findUnique(cli_email :string) :Promise<ClienteEntity>{
+    return this.prisma.cliente.findUnique({where:{cli_email}});
+  }
+  async findOne(cli_id: number) : Promise<ClienteEntity> {
+    return this.prisma.cliente.findUnique({where:{cli_id}});
   }
 
-  async create(createClienteDto: CreateClienteDto): Promise<ClienteEntity> {
-    return this.prisma.cliente.create({
-      data: createClienteDto
-    });
+  async update(cli_id: number, updateClienteDto: UpdateClienteDto) : Promise<ClienteEntity> {
+    return this.prisma.cliente.update({where:{cli_id}, data: updateClienteDto});
   }
 
-  async findAll(): Promise<ClienteEntity[]> {
-    return this.prisma.cliente.findMany();
-  }
-
-  async findOne(id: number): Promise<ClienteEntity> {
-    return this.prisma.cliente.findUnique({
-      where: { id }
-    });
-  }
-
-  async update(id: number, updateClienteDto: UpdateClienteDto): Promise<ClienteEntity> {
-    return this.prisma.cliente.update({
-      where: { id },
-      data: updateClienteDto
-    });
-  }
-
-  async remove(id: number): Promise<ClienteEntity> {
-    return this.prisma.cliente.delete({
-      where: { id }
-    });
+  async remove(cli_id: number) : Promise<ClienteEntity> {
+    return this.prisma.cliente.delete({where:{cli_id}});
   }
 }
