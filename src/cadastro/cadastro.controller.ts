@@ -8,20 +8,8 @@ export class CadastroController {
   constructor(private readonly cadastroService: CadastroService) {}
 
   @Post()
-  async create(@Body() createCadastroDto: CreateCadastroDto) {
-    try {
-      return await this.cadastroService.create(createCadastroDto);
-    } catch (error) {
-      if (
-        error.code === 'P2002' &&
-        error.meta?.target?.includes('cli_email')
-      ) {
-        throw new ConflictException('E-mail já cadastrado.');
-      }
-  
-      console.error('Erro ao criar cadastro:', error);
-      throw new InternalServerErrorException('Erro interno ao criar cadastro.');
-    }
+  create(@Body() createCadastroDto: CreateCadastroDto) {
+    return this.cadastroService.create(createCadastroDto);
   }
 
   @Get()
