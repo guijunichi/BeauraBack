@@ -9,10 +9,8 @@ export class ClienteService {
   constructor(private readonly prisma: PrismaService) {}
 
   // Buscar cliente por email
-  async findByEmail(email: string): Promise<ClienteEntity | null> {
-    return this.prisma.cliente.findUnique({
-      where: { email: email }
-    });
+  async findByEmail(cli_email: string): Promise<ClienteEntity | null> {
+    return this.prisma.cliente.findUnique({ where: { cli_email } });
   }
 
   async create(createClienteDto: CreateClienteDto): Promise<ClienteEntity> {
